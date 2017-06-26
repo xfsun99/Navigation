@@ -1,0 +1,394 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0110 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <FL/fl_ask.H>} {} 
+
+decl {\#include <FL/Fl_File_Chooser.H>} {} 
+
+class NavigatorGUI {open : {public igstk::Object}
+} {
+  Function {NavigatorGUI()} {open
+  } {
+    Fl_Window mainWindow {
+      label {Navigation System}
+      callback {Quit();} open
+      xywh {-32000 -32000 1300 800} type Double box PLASTIC_UP_BOX color 30 align 0 hide resizable
+      code0 {\#include "igstkFLTKWidget.h"}
+      code1 {\#include <time.h>}
+    } {
+      Fl_Group {} {open
+        xywh {-30 -20 1331 875} color 30 align 0
+      } {
+        Fl_Group m_ControlGroup {open
+          xywh {1150 0 150 800} box FLAT_BOX color 30 selection_color 7 labelsize 17 labelcolor 4 align 0
+        } {
+          Fl_Button m_QuitButton {
+            label Quit
+            callback {Quit();}
+            tooltip {Quit application} xywh {1161 751 130 30} box PLASTIC_UP_BOX down_box PLASTIC_DOWN_BOX color 55 selection_color 134 labelsize 12 hide
+          }
+          Fl_Box m_TrackingSemaphore {
+            label OFF
+            xywh {1168 700 120 30} box GTK_UP_BOX color 246
+          }
+          Fl_Box m_ReferenceSemaphore {
+            label OFF
+            xywh {1168 626 120 30} box GTK_UP_BOX color 246
+          }
+          Fl_Box {} {
+            label {Reference Status}
+            xywh {1170 595 120 37} color 7 labelsize 17 labelcolor 7
+          }
+          Fl_Box {} {
+            label {Tool Status}
+            xywh {1168 672 120 37} labelsize 17 labelcolor 7
+          }
+          Fl_Choice m_ViewModeList {
+            label {Viewing Mode}
+            callback {RequestChangeSelectedViewMode();}
+            xywh {1168 559 120 24} box GTK_UP_BOX down_box GTK_DOWN_BOX color 77 labelsize 17 labelcolor 7 align 1
+          } {
+            MenuItem {} {
+              label Orthogonal
+              xywh {0 0 30 20} labelsize 15
+            }
+            MenuItem {} {
+              label {Off-Orthogonal}
+              xywh {0 0 30 20}
+            }
+            MenuItem {} {
+              label Oblique
+              xywh {0 0 30 20}
+            }
+          }
+          Fl_Button m_LoadImageButton {
+            label {Load Image}
+            callback {RequestLoadImage();}
+            tooltip {Load MRI data set} xywh {1168 16 120 30} box GTK_UP_BOX down_box GTK_DOWN_BOX color 77 selection_color 215
+          }
+          Fl_Button m_LoadMeshButton {
+            label {Load Mesh}
+            callback {RequestLoadMesh();}
+            tooltip {Load Segmentation(.msh)} xywh {1168 105 120 30} box GTK_UP_BOX down_box GTK_DOWN_BOX color 77 selection_color 215
+          }
+          Fl_Choice m_FiducialsPointList {
+            label Fiducials
+            callback {RequestChangeSelectedFiducial();}
+            xywh {1168 211 120 24} box GTK_UP_BOX down_box GTK_DOWN_BOX color 77 labelsize 17 labelcolor 7 align 1
+          } {}
+          Fl_Button m_ModifyFiducialsButton {
+            label {Modify Fiducials}
+            callback {RequestToggleSetImageFiducials();}
+            tooltip {Modify fiducial coordinates (by mouse clicking on image)} xywh {1168 240 120 30} box GTK_UP_BOX down_box GTK_DOWN_BOX color 77 selection_color 215
+          }
+          Fl_Button m_ConfigureTrackerButton {
+            label {Configure Tracker}
+            callback {RequestLoadToolSpatialObject();}
+            tooltip {Configue tracker system} xywh {1168 301 120 30} box GTK_UP_BOX down_box GTK_DOWN_BOX color 77 selection_color 215
+          }
+          Fl_Button m_RegisterButton {
+            label Register
+            callback {RequestStartSetTrackerFiducials();}
+            tooltip {Register tracker system to image} xywh {1168 353 120 30} box GTK_UP_BOX down_box GTK_DOWN_BOX color 77 selection_color 215
+          }
+          Fl_Slider m_SegmentationOpacitySlider {
+            label {Opacity of  Mesh}
+            callback {SetOpacityOfImplant();}
+            tooltip {Adjust opacity of Segmentation} xywh {1168 487 120 27} type {Horz Knob} box PLASTIC_UP_BOX color 7 selection_color 7 labelsize 17 labelcolor 7 align 1 step 0.1 value 1
+          }
+          Fl_Slider m_SkullOpacitySlider {
+            label {Opacity of Skull}
+            callback {SetOpacityOfSkull();}
+            tooltip {Adjust opacity of skull} xywh {1168 417 120 27} type {Horz Knob} box PLASTIC_UP_BOX color 7 selection_color 7 labelsize 17 labelcolor 7 align 1 step 0.1 value 1
+          }
+          Fl_Button m_LoadOverlayButton {
+            label {Load Overlay}
+            callback {RequestLoadOverlay();}
+            tooltip {Load Overlay} xywh {1168 60 120 30} box GTK_UP_BOX down_box GTK_DOWN_BOX color 77 selection_color 215
+          }
+          Fl_Button m_ScreenShotButton {
+            callback {RequestScreenShot();}
+            tooltip ScreenShot image {screenshot.png} xywh {1195 756 60 25} box GTK_UP_BOX color 23
+          }
+          Fl_Button m_DisplayCtrl {
+            label {Display Ctrl}
+            callback {RegistrationDisplayControlWindow->show();}
+            tooltip {Load Segmentation(.msh)} xywh {1168 150 120 30} box GTK_UP_BOX down_box GTK_DOWN_BOX color 77 selection_color 215
+          }
+        }
+      }
+      Fl_Group m_ViewerGroup {open
+        xywh {23 0 1127 800} box UP_BOX color 30 selection_color 7 labelcolor 7 align 0
+        code0 {\#include "NavigatorQuadrantViews.h"}
+        class {igstk::NavigatorQuadrantViews}
+      } {
+        Fl_Box m_Information {
+          image {inform.jpg} xywh {0 0 23 800} box UP_BOX color 30 selection_color 7 align 128
+        }
+      }
+    }
+    code {mainWindow->show();
+
+//mainWindow->fullscreen();
+hasQuitted = false;
+
+// force the control panel to 150
+int x = m_ControlGroup->x();
+int y = m_ControlGroup->y();
+int width = m_ControlGroup->w();
+int height = m_ControlGroup->h();
+
+m_ControlGroup->resize(x,y,width,height);} {}
+    Fl_Window m_WinProgress {
+      label {SNAP Progress Meter}
+      xywh {464 491 485 70} type Double box GTK_UP_BOX color 30 selection_color 7 modal noborder visible
+    } {
+      Fl_Group {} {
+        label {Working ...} open
+        xywh {0 0 480 25} color 30 selection_color 7 labelfont 1 labelsize 16 labelcolor 7 align 16
+      } {}
+      Fl_Group {} {
+        xywh {10 25 470 40} box BORDER_BOX color 30
+      } {
+        Fl_Slider m_OutProgressMeter {
+          xywh {20 35 395 20} type {Horz Fill} box PLASTIC_DOWN_BOX selection_color 62 align 16 maximum 100 step 0.1 value 50
+        }
+        Fl_Value_Output m_OutProgressCounter {
+          label {%}
+          xywh {420 35 40 20} color 7 labelsize 12 align 8 maximum 100 step 0.1 value 50 textsize 12
+        }
+      }
+    }
+    Fl_Window m_ConfirmToQuitWindow {
+      label {Shut down system}
+      xywh {170 578 422 150} type Double box GTK_UP_BOX color 30 selection_color 55 align 16 modal noborder visible
+    } {
+      Fl_Box {} {
+        label {Are you sure you want to quit?}
+        xywh {40 24 335 51} labelsize 22 labelcolor 7
+      }
+      Fl_Button {} {
+        label Yes
+        callback {m_ConfirmToQuitWindow->hide();
+this->RequestPrepareToQuit();
+this->hasQuitted = true;}
+        xywh {208 108 85 30} box PLASTIC_UP_BOX down_box PLASTIC_UP_BOX color 55 selection_color 95
+      }
+      Fl_Button {} {
+        label Cancel
+        callback {m_ConfirmToQuitWindow->hide();
+this->hasQuitted = false;}
+        xywh {313 108 85 30} box PLASTIC_UP_BOX down_box PLASTIC_UP_BOX color 55 selection_color 95
+      }
+    }
+    Fl_Window m_PatientNameWindow {
+      label {Patient confirmation}
+      xywh {180 248 422 150} type Double box GTK_UP_BOX color 30 selection_color 55 align 16 modal noborder visible
+    } {
+      Fl_Box {} {
+        label {Please confirm patient's name}
+        xywh {37 24 335 30} labelsize 22 labelcolor 7
+      }
+      Fl_Button {} {
+        label Confirm
+        callback {m_PatientNameWindow->hide();
+this->RequestAcceptImageLoad();}
+        xywh {208 108 85 30} box PLASTIC_UP_BOX down_box PLASTIC_UP_BOX color 55 selection_color 95
+      }
+      Fl_Button {} {
+        label Cancel
+        callback {m_PatientNameWindow->hide();
+this->RequestCancelImageLoad();}
+        xywh {313 108 85 30} box PLASTIC_UP_BOX down_box PLASTIC_UP_BOX color 55 selection_color 95
+      }
+      Fl_Output m_PatientNameLabel {
+        label {output:}
+        xywh {38 67 335 23} align 0
+      }
+    }
+    Fl_Window m_AcceptRegistrationWindow {
+      label {Confirm To Proceed} open
+      xywh {741 273 422 150} type Double box GTK_UP_BOX color 30 selection_color 55 align 16 modal noborder visible
+    } {
+      Fl_Box {} {
+        label {The RMS registration error is:}
+        xywh {17 19 205 32} labelsize 15 labelcolor 7
+      }
+      Fl_Button {} {
+        label Yes
+        callback {m_AcceptRegistrationWindow->hide();
+this->RequestAcceptRegistration();}
+        xywh {208 111 85 30} box PLASTIC_UP_BOX down_box PLASTIC_UP_BOX color 55 selection_color 95
+      }
+      Fl_Button {} {
+        label No
+        callback {m_AcceptRegistrationWindow->hide();
+this->RequestRejectRegistration();}
+        xywh {313 111 85 30} box PLASTIC_UP_BOX down_box PLASTIC_UP_BOX color 55 selection_color 95
+      }
+      Fl_Box {} {
+        label {Do you wish to accept this error?}
+        xywh {11 67 405 27} labelsize 22 labelcolor 7
+      }
+      Fl_Output m_RegistrationErrorLabel {
+        xywh {222 23 173 23} align 0
+      }
+    }
+    Fl_Window RegistrationDisplayControlWindow {
+      label {Surface Registration} open
+      xywh {287 440 780 375} type Double visible
+    } {
+      Fl_Box Display1 {
+        label {Target Point Sets}
+        xywh {5 0 380 330} box FLAT_BOX color 32 labelcolor 7
+        code0 {\#include "igstkFLTKWidget.h"}
+        code1 {\#include "igstkView3D.h"}
+        class {igstk::FLTKWidget}
+      }
+      Fl_Box Display2 {
+        label {Moving Point Sets}
+        xywh {395 0 380 330} box FLAT_BOX color 32 labelcolor 7
+        code0 {\#include "igstkFLTKWidget.h"}
+        code1 {\#include "igstkView3D.h"}
+        class {igstk::FLTKWidget}
+      }
+      Fl_Button m_LoadTarget {
+        label Target
+        callback {RequestLoadTarget();}
+        xywh {5 345 64 25}
+      }
+      Fl_Button m_LoadMoving {
+        label Moving
+        callback {RequestLoadMoving();}
+        xywh {710 345 64 25}
+      }
+      Fl_Button m_Landmarks {
+        label Landmarks
+        xywh {320 345 100 25}
+      }
+      Fl_Button m_ICP {
+        label ICP
+        xywh {495 345 100 25}
+      }
+      Fl_Choice SurfaceList {open
+        xywh {114 345 65 25} down_box BORDER_BOX
+      } {
+        MenuItem {} {
+          label Target
+          callback {ChangeSelectedSurface(0);}
+          xywh {0 0 30 20}
+        }
+        MenuItem {} {
+          label Moving
+          callback {ChangeSelectedSurface(1);}
+          xywh {0 0 30 20}
+        }
+      }
+      Fl_Choice TPointList {
+        label {choice:}
+        callback {ChangeSelectedTPoint();} open selected
+        xywh {25 25 65 15} down_box BORDER_BOX
+      } {}
+    }
+    code {this->m_View3D  = View3DType::New();
+this->m_View3D2 = View3DType::New();
+
+this->Display1->RequestSetView( this->m_View3D );
+this->Display2->RequestSetView( this->m_View3D2 );} {}
+  }
+  Function {~NavigatorGUI()} {return_type virtual
+  } {
+    code {delete m_ViewerGroup;} {}
+  }
+  decl {clock_t  m_SplashScreenStartTime;} {}
+  decl {bool hasQuitted;} {}
+  Function {Quit()} {return_type void
+  } {
+    code {m_ConfirmToQuitWindow->show();
+CenterChildWindowInParentWindow( m_ConfirmToQuitWindow );} {}
+  }
+  Function {HasQuitted()} {return_type bool
+  } {
+    code {return this->hasQuitted;} {}
+  }
+  Function {RequestLoadImage()} {return_type {virtual void}
+  } {}
+  Function {RequestLoadMesh()} {return_type {virtual void}
+  } {}
+  Function {RequestChangeSelectedFiducial()} {return_type {virtual void}
+  } {}
+  Function {RequestInitializeTracker()} {return_type {virtual void}
+  } {}
+  Function {RequestDisconnectTracker()} {return_type {virtual void}
+  } {}
+  Function {RequestTrackerRegistration()} {return_type {virtual void}
+  } {}
+  Function {RequestToggleSetImageFiducials()} {return_type {virtual void}
+  } {}
+  Function {RequestResetCameraToImageBounds()} {return_type {virtual void}
+  } {}
+  Function {RequestCancelImageLoad()} {return_type {virtual void}
+  } {}
+  Function {RequestAcceptImageLoad()} {return_type {virtual void}
+  } {}
+  Function {RequestPrepareToQuit()} {return_type {virtual void}
+  } {}
+  Function {RequestConfirmToProceed()} {return_type {virtual void}
+  } {}
+  Function {RequestStartTracking()} {return_type {virtual void}
+  } {}
+  Function {RequestAcceptRegistration()} {return_type {virtual void}
+  } {}
+  Function {RequestRejectRegistration()} {return_type {virtual void}
+  } {}
+  Function {RequestChangeSelectedViewMode()} {return_type {virtual void}
+  } {}
+  Function {RequestStartSetTrackerFiducials()} {return_type {virtual void}
+  } {}
+  Function {DisableAll()} {return_type void
+  } {
+    code {m_LoadImageButton->deactivate();
+m_LoadMeshButton->deactivate();
+m_FiducialsPointList->deactivate();
+m_ModifyFiducialsButton->deactivate();
+m_ConfigureTrackerButton->deactivate();
+m_RegisterButton->deactivate();
+m_ViewModeList->deactivate();
+m_SegmentationOpacitySlider->deactivate();
+m_SkullOpacitySlider->deactivate();
+m_LoadOverlayButton->deactivate();} {}
+  }
+  Function {RequestLoadToolSpatialObject()} {return_type {virtual void}
+  } {}
+  Function {CenterChildWindowInParentWindow(Fl_Window *childWindow)} {return_type void
+  } {
+    code {int px = mainWindow->x() + (mainWindow->w() - childWindow->w()) / 2;
+int py = mainWindow->y() + (mainWindow->h() - childWindow->h()) / 2;
+childWindow->resize(px,py,childWindow->w(),childWindow->h());} {}
+  }
+  Function {SetOpacityOfImplant()} {return_type {virtual void}
+  } {}
+  Function {SetOpacityOfSkull()} {return_type {virtual void}
+  } {}
+  Function {RequestLoadOverlay()} {return_type {virtual void}
+  } {}
+  Function {RequestScreenShot()} {open return_type {virtual void}
+  } {}
+  decl {typedef igstk::View3D  View3DType;} {public
+  }
+  decl {typedef View3DType::Pointer  View3DPointer;} {public
+  }
+  decl {View3DPointer m_View3D;} {public
+  }
+  decl {View3DPointer m_View3D2;} {public
+  }
+  Function {RequestLoadTarget()} {open return_type {virtual void}
+  } {}
+  Function {RequestLoadMoving()} {open return_type {virtual void}
+  } {}
+  Function {ChangeSelectedTPoint()} {open return_type {virtual void}
+  } {}
+  Function {ChangeSelectedSurface(int)} {open return_type {virtual void}
+  } {}
+} 
